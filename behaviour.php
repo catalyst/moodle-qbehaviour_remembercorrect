@@ -27,4 +27,44 @@ require_once(__DIR__ . '/../deferredfeedback/behaviour.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qbehaviour_remembercorrect extends qbehaviour_deferredfeedback {
+    /**
+     * Adjusts the display options to lock correct answers.
+     * @param question_display_options $options the options to adjust.
+     */
+    public function adjust_display_options(question_display_options $options) {
+        parent::adjust_display_options($options);
+
+        if ($this->qa->get_state()->is_active() && $this->is_previous_attempt_correct()) {
+            $options->readonly = true;
+            $options->correctness = question_display_options::VISIBLE;
+            $options->extrainfocontent .= get_string('previouscorrect', 'qbehaviour_remembercorrect');
+        }
+    }
+
+    /**
+     * Work out whether the response in $pendingstep are significantly different
+     * from the last set of responses we have stored.
+     * @param question_attempt_step $pendingstep contains the new responses.
+     * @return bool whether the new response is the same as we already have.
+     */
+    protected function is_same_response(question_attempt_step $pendingstep): bool {
+        // If we made the question readonly $pendingstep won't contain the response.
+        return $this->is_previous_attempt_correct() ? true : parent::is_same_response($pendingstep);
+    }
+
+    /**
+     * Determines whether the response from the previous attempt was correct.
+     * @return bool whether the response from the previous attempt was correct.
+     */
+    protected function is_previous_attempt_correct(): bool {
+        // Get the response from the previous attempt. This should always be the first step.
+        $prevresponse = $this->qa->get_step(0)->get_qt_data();
+        if (!$prevresponse || !$this->question->is_gradable_response($prevresponse)) {
+            return false;
+        }
+
+        // Grade the response to see if it was correct.
+        [$fraction, $state] = $this->question->grade_response($prevresponse);
+        return $state === question_state::$gradedright || $fraction == $this->question->get_max_fraction();
+    }
 }

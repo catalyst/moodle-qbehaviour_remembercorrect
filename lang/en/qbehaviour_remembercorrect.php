@@ -24,5 +24,6 @@
  */
 
 $string['pluginname'] = 'Remember correct across attempts';
+$string['previouscorrect'] = 'This question was answered correctly in a previous attempt.';
 $string['privacy:metadata'] = 'The remember correct question behaviour plugin does not store any personal data.';
 $string['questionusedunknownmodel'] = 'This question was attempted with a behaviour that is not currently available. The question is being displayed as well as possible, but some parts may be remembercorrect or wrong.';
