@@ -1,0 +1,27 @@
+From 663f7b0d5188791705870a17257079c9c98b648c Mon Sep 17 00:00:00 2001
+From: Benjamin Walker <benjaminwalker@catalyst-au.net>
+Date: Fri, 30 Jan 2026 10:57:10 +1000
+Subject: [PATCH] Allow remembercorrect in essay make_behaviour
+
+---
+ question/type/essay/question.php | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/question/type/essay/question.php b/question/type/essay/question.php
+index 5d9b6d03893..bbe927a133c 100644
+--- a/question/type/essay/question.php
++++ b/question/type/essay/question.php
+@@ -66,6 +66,10 @@ class qtype_essay_question extends question_with_responses {
+     public $filetypeslist;
+ 
+     public function make_behaviour(question_attempt $qa, $preferredbehaviour) {
++        // Core hack for qbehaviour_remembercorrect plugin.
++        if ($preferredbehaviour === 'remembercorrect') {
++            return parent::make_behaviour($qa, $preferredbehaviour);
++        }
+         return question_engine::make_behaviour('manualgraded', $qa, $preferredbehaviour);
+     }
+ 
+-- 
+2.43.0
+
