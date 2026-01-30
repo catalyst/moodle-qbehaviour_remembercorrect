@@ -25,8 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2026011600;
-$plugin->release   = 2026011600; // Match release exactly to version.
+$plugin->version   = 2026013000;
+$plugin->release   = 2026013000; // Match release exactly to version.
 $plugin->requires  = 2024100700; // Moodle 4.5.
 $plugin->component = 'qbehaviour_remembercorrect';
 $plugin->maturity  = MATURITY_STABLE;
