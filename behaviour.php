@@ -172,12 +172,13 @@ class qbehaviour_remembercorrect extends qbehaviour_deferredfeedback {
     public function get_previous_graded_attempt(): question_attempt|bool {
         global $DB;
 
-        static $gradedattempt = null;
-        if (isset($gradedattempt)) {
-            return $gradedattempt;
+        static $gradedattempts = [];
+        $slot = $this->qa->get_slot();
+        if (isset($gradedattempts[$slot])) {
+            return $gradedattempts[$slot];
         }
 
-        $gradedattempt = false;
+        $gradedattempts[$slot] = false;
 
         // Load the user's previous quiz attempts at this quiz.
         if (!$record = $DB->get_record('quiz_attempts', ['uniqueid' => $this->qa->get_usage_id()])) {
@@ -190,7 +191,6 @@ class qbehaviour_remembercorrect extends qbehaviour_deferredfeedback {
         }
 
         // Find the most recent graded question attempt for the same response.
-        $slot = $this->qa->get_slot();
         $quizattempts = array_reverse($quizattempts);
         foreach ($quizattempts as $quizattempt) {
             if ($quizattempt->uniqueid == $this->qa->get_usage_id()) {
@@ -208,8 +208,8 @@ class qbehaviour_remembercorrect extends qbehaviour_deferredfeedback {
             }
 
             if ($attempt->get_state()->is_graded()) {
-                $gradedattempt = $attempt;
-                return $gradedattempt;
+                $gradedattempts[$slot] = $attempt;
+                return $gradedattempts[$slot];
             }
         }
 
